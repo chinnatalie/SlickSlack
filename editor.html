@@ -16,14 +16,39 @@
   <script src="/lib/masonry.js"></script>
 </head>
 <!-- ffdf3309-e687-43c5-89bf-6549e7d58f17 -->
+<body>
+  <div>
+      <img id="slacklogo" src='https://www.seeklogo.net/wp-content/uploads/2015/09/slack-logo-vector-download.jpg' alt='slack'
+      style="margin-left:auto;margin-right:auto;display:block;height:300px;width:300px;">
+  </div>
+  <div>
+    <h2 style="text-align:center;margin-left:auto;margin-right:auto;display:block;">Upload the following TLDR to Slack?</h2>
+  </div>
+  <h5 style="text-align:center;margin-left:auto;margin-right:auto;display:block;" id="messageText">
+  </h5>
+  <br><br>
+  <button id="postToSlack" style="background-color: #4CAF50; /* Green */
+    border: none;
+    color: white;
+    padding: 15px 32px;
+    text-align: center;
+    text-decoration: none;
+    font-size: 16px;">
+    Post to Slack!
+  </button>
+</body>
+
 <script>
 var str;
 
 getMessages();
 
-setTimeout(function () {
-  postSlack();
-}, 1000);
+document.getElementById('postToSlack').onclick = function() {
+  setTimeout(function () {
+    postSlack();
+  }, 0);
+  alert("Posted to Slack! :D")
+};
 
 function getMessages() {
   $.ajax({
@@ -77,9 +102,4 @@ function postSlack() {
 }
 
 </script>
-<body>
-  <div id="messageText">
-    Hello world! I have not slacked yet!
-  </div>
-</body>
 </html>

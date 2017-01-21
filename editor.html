@@ -1,0 +1,85 @@
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
+  <title>TLDR 4 Slack</title>
+
+  <!-- Mixmax SDK -->
+  <script defer src="https://d1xa36cy0xt122.cloudfront.net/v1/Mixmax.js"></script>
+
+  <link rel="stylesheet" href="/styles.css">
+  <link href='//fonts.googleapis.com/css?family=Merriweather:400,700,400italic,700italic,900,900italic,300italic,300' rel='stylesheet' type='text/css'>
+  <script src="//code.jquery.com/jquery-2.1.3.min.js"></script>
+  <script src="//cdnjs.cloudflare.com/ajax/libs/underscore.js/1.8.2/underscore-min.js"></script>
+  <script src="//cdnjs.cloudflare.com/ajax/libs/backbone.js/1.1.2/backbone-min.js"></script>
+  <script src="/lib/masonry.js"></script>
+</head>
+<!-- ffdf3309-e687-43c5-89bf-6549e7d58f17 -->
+<script>
+var str;
+
+getMessages();
+
+setTimeout(function () {
+  postSlack();
+}, 1000);
+
+function getMessages() {
+  $.ajax({
+    url: 'https://api.mixmax.com/v1/messages',
+    headers: {
+      'X-API-Token': '33f71c4f-4342-4e45-9666-fa4ee6b97750'
+    },
+    type: 'GET',
+    datatype: 'json',
+    error: function(err) {
+      console.log(err);
+    },
+    success: function(data){
+      var i,j;
+      for(i=0;i<data.results.length;i++) {
+          for(j=0;j<data.results.length;j++) {
+            if (data.results[j].updatedAt < data.results[i].updatedAt){
+              var temp = data.results[j];
+              data.results[j] = data.results[i];
+              data.results[i] = temp;
+            }
+      }
+    }
+      var tldr1 = /TLDR:/;
+      var tldr2 = /:TLDR/;
+      str = data.results[0].body.split(tldr1)[1];
+      str = str.split(tldr2)[0];
+      //var output = str.substring(str.indexOf(',') + 1, str.length);
+      document.getElementById('messageText').innerHTML = "<p>" + JSON.stringify(str) + "<p>";
+      console.log(typeof str);
+    }
+  });
+}
+function postSlack() {
+  $.ajax({
+    url: 'https://hooks.slack.com/services/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',
+    type: 'POST',
+    datatype: 'json',
+    data: 'payload=' + JSON.stringify({
+        "text": str
+    }),
+    error: function(err) {
+      //console.log(err);
+            console.log(str);
+    },
+    success: function(data){
+      //console.log(data);
+            console.log(str);
+    }
+  });
+}
+
+</script>
+<body>
+  <div id="messageText">
+    Hello world! I have not slacked yet!
+  </div>
+</body>
+</html>

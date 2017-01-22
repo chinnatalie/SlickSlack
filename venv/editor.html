@@ -1,0 +1,150 @@
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
+  <title>TLDR 4 Slack</title>
+
+  <!-- Mixmax SDK -->
+  <script defer src="https://d1xa36cy0xt122.cloudfront.net/v1/Mixmax.js"></script>
+  <link href="https://afeld.github.io/emoji-css/emoji.css" rel="stylesheet">
+  <link rel="stylesheet" href="/styles.css">
+  <link href='//fonts.googleapis.com/css?family=Merriweather:400,700,400italic,700italic,900,900italic,300italic,300' rel='stylesheet' type='text/css'>
+  <script src="//code.jquery.com/jquery-2.1.3.min.js"></script>
+  <script src="//cdnjs.cloudflare.com/ajax/libs/underscore.js/1.8.2/underscore-min.js"></script>
+  <script src="//cdnjs.cloudflare.com/ajax/libs/backbone.js/1.1.2/backbone-min.js"></script>
+  <script src="/lib/masonry.js"></script>
+</head>
+<!-- ffdf3309-e687-43c5-89bf-6549e7d58f17 -->
+<body>
+  <div>
+      <img id="slacklogo" src='https://www.seeklogo.net/wp-content/uploads/2015/09/slack-logo-vector-download.jpg' alt='slack'
+      style="margin-left:auto;margin-right:auto;display:block;height:200px;width:auto;" />
+  </div>
+  <h2 id="warningText"; style="text-align:center;margin-left:auto;margin-right:auto;margin-bottom:10px;"></h2>
+  <p id="warningHint"; style="text-align:center;margin-left:auto;margin-right:auto;margin-bottom:10px;"></p>
+  <div id="mainBody">
+    <div>
+      <h2 style="text-align:center;margin-left:auto;margin-right:auto;margin-bottom:10px;">Upload </h2>
+    </div>
+    <div style="border: 1px solid #9e9ea6;border-radius: 10px;min-height:70px;width: 400px;margin-left:auto;margin-right:auto;height: auto;padding: 10px 20px 10px 10px;">
+      <div style="float: left;height:40px;width:40px;margin:0 10px 20px 10px;">
+        <p style="font-size: 30px;"><i class="em em-fax"></i></p>
+      </div>
+      <div padding="padding-left: 10px;">
+        <div>
+          <div style="display:inline-block;font-weight: bold;font-size:20px;">TL;DR</div>
+          <div style="display:inline-block;font-size:12px;color:#9e9ea6">10:00AM</div>
+        </div>
+        <div id="messageText"></div>
+      </div>
+    </div>
+    <div>
+      <h2 style="text-align:center;margin-left:auto;margin-right:auto;display:block;margin-top:10px;margin-bottom:10px;"> to Slack?</h2>
+    </div>
+    <div id="channelList">
+    </div>
+  </div>
+
+
+
+  <br><br>
+  <button id="postToSlack" style="background-color: #4CAF50; /* Green */
+    border: none;
+    color: white;
+    padding: 10px 32px;
+    text-align: center;
+    vertical-align: middle;
+    text-decoration: none;
+    font-size: 50px;">
+    Post to Slack!
+  </button>
+</body>
+
+<script>
+var str;
+
+getMessages();
+
+document.getElementById('postToSlack').onclick = function() {
+  setTimeout(function () {
+    postSlack();
+  }, 0);
+  alert("Posted to Slack! :D")
+};
+
+function getMessages() {
+  $.ajax({
+    url: 'https://api.mixmax.com/v1/messages',
+    headers: {
+      'X-API-Token': '33f71c4f-4342-4e45-9666-fa4ee6b97750'
+    },
+    type: 'GET',
+    datatype: 'json',
+    error: function(err) {
+      console.log(err);
+    },
+    success: function(data){
+    console.log(data);
+      var i,j;
+      for(i=0;i<data.results.length;i++) {
+          for(j=0;j<data.results.length;j++) {
+            if (data.results[j].updatedAt < data.results[i].updatedAt){
+              var temp = data.results[j];
+              data.results[j] = data.results[i];
+              data.results[i] = temp;
+            }
+      }
+    }
+      var tldr1 = /TLDR:/;
+      var tldr2 = /:TLDR/;
+      str = data.results[0].body.split(tldr1)[1];
+
+      if(str==undefined||str==str.split(tldr2)[0]) {
+        document.getElementById('warningText').innerHTML = "You need to save a draft, with a sentence enclosed with TLDR: and :TLDR!";
+        document.getElementById('warningHint').innerHTML = 'Psst... Like this: "TLDR: MixMax is awesome! :TLDR"';
+        document.getElementById('mainBody').style.display = 'none';
+        document.getElementById('postToSlack').innerHTML = "Return to Gmail";
+        document.getElementById('postToSlack').onclick = function() {
+          window.close();
+        };
+      } else {
+          str = data.results[0].body.split(tldr1)[1];
+          str = str.split(tldr2)[0];
+          //var output = str.substring(str.indexOf(',') + 1, str.length);
+          document.getElementById('messageText').innerHTML = "<p>" + JSON.stringify(str) + "<p>";
+          console.log(typeof str);
+          listChannels();
+      }
+    }
+  });
+}
+function postSlack() {
+  $.ajax({
+    url: 'https://hooks.slack.com/services/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',
+    type: 'POST',
+    datatype: 'json',
+    data: 'payload=' + JSON.stringify({
+        "text": str
+    }),
+    error: function(err) {
+      //console.log(err);
+            console.log(str);
+    },
+    success: function(data){
+      //console.log(data);
+            console.log(str);
+    }
+  });
+}
+
+function listChannels() {
+  $.ajax({
+    url: "https://54.146.234.57/slacklist.py",
+  }).done(function(data) {
+    document.getElementById('channelList').innerHTML = '<p>' + data + '</p>';
+  });
+}
+
+</script>
+</html>

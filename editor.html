@@ -3,7 +3,7 @@
   <meta charset="utf-8">
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
-  <title>TLDR 4 Slack</title>
+  <title>SlickSlack</title>
 
   <!-- Mixmax SDK -->
   <script defer src="https://d1xa36cy0xt122.cloudfront.net/v1/Mixmax.js"></script>
@@ -33,7 +33,7 @@
       </div>
       <div padding="padding-left: 10px;">
         <div>
-          <div style="display:inline-block;font-weight: bold;font-size:20px;">TL;DR</div>
+          <div style="display:inline-block;font-weight: bold;font-size:20px;">SlickSlackBot</div>
           <div style="display:inline-block;font-size:12px;color:#9e9ea6">10:00AM</div>
         </div>
         <div id="messageText"></div>
@@ -102,13 +102,13 @@ function getMessages() {
             }
       }
     }
-      var tldr1 = /TLDR:/;
-      var tldr2 = /:TLDR/;
+      var tldr1 = /Slick:/;
+      var tldr2 = /:Slick/;
       str = data.results[0].body.split(tldr1)[1];
 
       if(str==undefined||str==str.split(tldr2)[0]) {
-        document.getElementById('warningText').innerHTML = "You need to save a draft, with a sentence enclosed with TLDR: and :TLDR!";
-        document.getElementById('warningHint').innerHTML = 'Psst... Like this: "TLDR: MixMax is awesome! :TLDR"';
+        document.getElementById('warningText').innerHTML = "You need to save a draft, with a sentence enclosed with Slick: and :Slick!";
+        document.getElementById('warningHint').innerHTML = 'Psst... Like this: "Slick: MixMax is awesome! :Slick"';
         document.getElementById('mainBody').style.display = 'none';
         document.getElementById('postToSlack').innerHTML = "Return to Gmail";
         document.getElementById('postToSlack').onclick = function() {
